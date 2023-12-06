@@ -8,11 +8,10 @@ include(CTest)
 enable_testing()
 
 set(SOURCES
-
+${PROJECT_SOURCE_DIR}/main.cpp
 )
 
 add_executable(CoVidConverter 
-${PROJECT_SOURCE_DIR}/main.cpp
 ${SOURCES}
 )
 
