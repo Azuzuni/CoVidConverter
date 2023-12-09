@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 project (CoVidConverter)
 set(CMAKE_CXX_STANDARD 20)
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/include/fmt)
+set(OpenCV_DIR ${PROJECT_SOURCE_DIR}/lib/opencv)
+find_package(opencv REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+add_subdirectory(${PROJECT_SOURCE_DIR}/lib/fmt)
 
 include(CTest)
 enable_testing()
@@ -15,5 +18,7 @@ add_executable(CoVidConverter
 ${SOURCES}
 )
 
+target_link_libraries(CoVidConverter ${OpenCV_LIBS})
 target_link_libraries(CoVidConverter fmt)
 target_include_directories(CoVidConverter PRIVATE ${PROJECT_SOURCE_DIR}/include )
+target_include_directories(CoVidConverter PRIVATE ${PROJECT_SOURCE_DIR}/lib/opencv/include )
