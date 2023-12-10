@@ -3,15 +3,17 @@ project (CoVidConverter)
 set(CMAKE_CXX_STANDARD 20)
 
 set(OpenCV_DIR ${PROJECT_SOURCE_DIR}/lib/opencv)
-find_package(opencv REQUIRED)
+set(FMT_DIR ${PROJECT_SOURCE_DIR}/lib/fmt)
 include_directories(${OpenCV_INCLUDE_DIRS})
-add_subdirectory(${PROJECT_SOURCE_DIR}/lib/fmt)
+add_subdirectory(${FMT_DIR})
+find_package(OpenCV REQUIRED)
 
 include(CTest)
 enable_testing()
 
 set(SOURCES
 ${PROJECT_SOURCE_DIR}/main.cpp
+${PROJECT_SOURCE_DIR}/src/myApp.cpp
 )
 
 add_executable(CoVidConverter 

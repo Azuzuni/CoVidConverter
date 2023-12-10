@@ -1,8 +1,7 @@
-#include "fmt/core.h"
-#include <iostream>
-#include "opencv2/opencv.hpp"
+#include "myApp.h"
 int main()
 {
-    std::cout << cv::max(10,15) << '\n';
-    fmt::print("Hello, World!\n");
+    myApp app;
+    app.run();
+    return 0;
 }
