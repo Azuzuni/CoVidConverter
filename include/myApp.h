@@ -5,6 +5,13 @@
 #include "opencv2/videoio.hpp"
 #include "opencv2/highgui.hpp"
 #include "vidSearch.h"
+#include <cmath>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 class myApp
 {
@@ -15,4 +22,7 @@ public:
 
     myApp();
     ~myApp();
+private:
+    void m_window(cv::VideoCapture& r_Cap);
+
 };
