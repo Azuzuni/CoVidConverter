@@ -5,6 +5,7 @@
 #include "opencv2/videoio.hpp"
 #include "opencv2/highgui.hpp"
 #include "vidSearch.h"
+#include <memory>
 #include <cmath>
 
 #ifdef _WIN32

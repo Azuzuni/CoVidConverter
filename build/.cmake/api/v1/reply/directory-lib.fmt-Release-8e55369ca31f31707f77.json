@@ -48,7 +48,7 @@
 			"destination" : "lib",
 			"paths" : 
 			[
-				"lib/fmt/libfmtd.a"
+				"lib/fmt/libfmt.a"
 			],
 			"targetId" : "fmt::@334b76146eeaa333306c",
 			"targetIndex" : 29,

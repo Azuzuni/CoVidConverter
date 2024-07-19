@@ -3,7 +3,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "lib/fmt/libfmtd.a"
+			"path" : "lib/fmt/libfmt.a"
 		}
 	],
 	"backtrace" : 2,
@@ -71,7 +71,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=gnu++20"
+					"fragment" : "-O3 -DNDEBUG -std=gnu++20"
 				}
 			],
 			"includes" : 
@@ -113,7 +113,7 @@
 		}
 	},
 	"name" : "fmt",
-	"nameOnDisk" : "libfmtd.a",
+	"nameOnDisk" : "libfmt.a",
 	"paths" : 
 	{
 		"build" : "lib/fmt",

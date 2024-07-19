@@ -17,7 +17,7 @@ void myApp::run()
 
         double fps = cap.get(cv::CAP_PROP_FPS);
         int totalFrames = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_COUNT));
-        fmt::print("FPS: {}, Total frame1s: {}",fps, totalFrames);
+        fmt::print("FPS: {}, Total Frames: {}",fps, totalFrames);
 
         m_window(cap);
 
@@ -43,7 +43,7 @@ void myApp::run()
 }
 
 void myApp::m_window(cv::VideoCapture& r_cap) {
-    int width{480};
+    int width{380};
     int height{width/10};
 
     auto moveCursor = [](int row, int col){
@@ -75,53 +75,42 @@ void myApp::m_window(cv::VideoCapture& r_cap) {
         fmt::print("\n");
         for(int col{0}; col<width/3; ++col) {
             moveCursor(row,col);
-            fmt::print(" ");
+            fmt::print("$");
         }
     }
 
 
-    cv::Mat frame1;
-    cv::Mat consoleCurrentFrame;        
-    cv::Mat consoleNextFrame;        
-    r_cap >> frame1;
-    consoleCurrentFrame = frame1;
-    consoleNextFrame = frame1;
+    cv::Mat mainFrame;
+    cv::Mat buffor1;
+    cv::Mat buffor2;
+    // std::shared_ptr<cv::Mat> consCurrentFrame = std::make_unique<cv::Mat>();
+    std::unique_ptr<cv::Mat> consCurrentFrame = static_cast<std::unique_ptr<cv::Mat>>(&buffor1) ;
+    std::unique_ptr<cv::Mat> consNextFrame = static_cast<std::unique_ptr<cv::Mat>>(&buffor2);       
+    r_cap >> mainFrame;
+    buffor1 = mainFrame;
+    buffor2 = mainFrame;
 
     while(true) {
-        if(cv::waitKey(50) == 107) {
-            continue;
-        }
-        r_cap >> frame1;
+        r_cap >> mainFrame;
 
-        if (frame1.empty() || consoleNextFrame.empty()) {
+        if (mainFrame.empty() || consCurrentFrame->empty()) {
             break;
         }
-        // Processing logic goes here
-        cv::resize(frame1,consoleNextFrame,cv::Size(width,height));
-        // cv::cvtColor(frame1, frame1, cv::COLOR_BGR2GRAY);
-        cv::cvtColor(consoleNextFrame, consoleNextFrame, cv::COLOR_BGR2GRAY);
 
-        // int x{0}; x<width; ++x
-        // int y{0}; y<width; ++y
-        // int x{0}; x<height; ++x
-        
+        // Processing logic goes here
+        cv::resize(mainFrame,*consNextFrame,cv::Size(width,height));
+        cv::cvtColor(*consNextFrame, *consNextFrame, cv::COLOR_BGR2GRAY);
+
         for(int y{0}; y<width/3; ++y) {
             for(int x{0}; x<height; ++x) {
 
-                int blue1 = consoleCurrentFrame.at<cv::Vec3b>(x,y)[0];
-                int green1 = consoleCurrentFrame.at<cv::Vec3b>(x,y)[1];
-                int red1 = consoleCurrentFrame.at<cv::Vec3b>(x,y)[2];
-                
-                int blue2 = consoleNextFrame.at<cv::Vec3b>(x,y)[0];
-                int green2 = consoleNextFrame.at<cv::Vec3b>(x,y)[1];
-                int red2 = consoleNextFrame.at<cv::Vec3b>(x,y)[2];
+                cv::Vec3b bgr1 = consCurrentFrame->at<cv::Vec3b>(x,y);
+                cv::Vec3b bgr2 = consNextFrame->at<cv::Vec3b>(x,y);
 
-                int bgr1 = (blue1+green1+red1)/3;
-                int bgr2 = (blue2+green2+red2)/3;
 
                 if(bgr1 != bgr2) {
                     moveCursor(x,y);
-                    switch (bgr2)
+                    switch ((bgr2[0]+bgr2[1]+bgr2[2])/3)
                     {
                         case 0 ... 25: fmt::print(" "); break;
                         case 26 ... 50: fmt::print(","); break;
@@ -133,33 +122,23 @@ void myApp::m_window(cv::VideoCapture& r_cap) {
                         case 176 ... 200: fmt::print("$"); break;
                         case 201 ... 225: fmt::print("#"); break;
                         case 226 ... 255: fmt::print("@"); break;
-                        // case 0 ... 25: fmt::print("."); break;
-                        // case 26 ... 50: fmt::print(","); break;
-                        // case 51 ... 75: fmt::print(";"); break;
-                        // case 76 ... 100: fmt::print("v"); break;
-                        // case 101 ... 125: fmt::print("l"); break;
-                        // case 126 ... 150: fmt::print("L"); break;
-                        // case 151 ... 175: fmt::print("F"); break;
-                        // case 176 ... 200: fmt::print("E"); break;
-                        // case 201 ... 225: fmt::print("#"); break;
-                        // case 226 ... 255: fmt::print("$"); break;
                         default: fmt::print("."); break;
-                        
                     }
                 }
 
             }
         }
 
-        consoleCurrentFrame = consoleNextFrame;
+        // consCurrentFrame = consNextFrame;
+        std::swap(consCurrentFrame,consNextFrame);
 
 
-        // Display the processed frame1
-        cv::imshow("Processed frame1", frame1);
-        // cv::imshow("Resized frame1", consoleCurrentFrame);
+        // Display the processed mainFrame
+        // cv::imshow("Processed mainFrame", mainFrame);
+        // cv::imshow("Resized mainFrame", consCurrentFrame);
 
         // Check for user input to break out of the loop
-        if (cv::waitKey(30) == 27) { // Press 'Esc' to exit
+        if (cv::waitKey(100) == 27) { // Press 'Esc' to exit
             break;
         }
     }
@@ -172,4 +151,5 @@ myApp::myApp(/* args */)
 myApp::~myApp()
 {
 }
+
 
