@@ -9,3 +9,7 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+build
+bad_apple.mp4
+lag_train.mp4
+test.txt
