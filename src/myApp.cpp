@@ -1,5 +1,17 @@
 #include "myApp.h"
+#include "fmt/core.h"
+#include "opencv2/core.hpp"
+#include "opencv2/videoio.hpp"
+#include "opencv2/highgui.hpp"
+#include "vidSearch.h"
+#include <memory>
 
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 void myApp::run()
 {
@@ -20,7 +32,6 @@ void myApp::run()
         fmt::print("FPS: {}, Total Frames: {}",fps, totalFrames);
 
         m_window(cap);
-
         cap.release();
     }
     
@@ -43,17 +54,17 @@ void myApp::run()
 }
 
 void myApp::m_window(cv::VideoCapture& r_cap) {
-    int width{380};
+    int width{180};
     int height{width/10};
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hConsole == INVALID_HANDLE_VALUE) {
+        std::cerr << "Error: Unable to get console handle." << std::endl;
+        return;
+    }
 
-    auto moveCursor = [](int row, int col){
+    auto moveCursor = [&hConsole](int row, int col){
         #ifdef _WIN32
             // Windows-specific implementation
-            HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-            if (hConsole == INVALID_HANDLE_VALUE) {
-                std::cerr << "Error: Unable to get console handle." << std::endl;
-                return;
-            }
 
             COORD position;
             position.X = col;
@@ -83,17 +94,18 @@ void myApp::m_window(cv::VideoCapture& r_cap) {
     cv::Mat mainFrame;
     cv::Mat buffor1;
     cv::Mat buffor2;
-    // std::shared_ptr<cv::Mat> consCurrentFrame = std::make_unique<cv::Mat>();
-    std::unique_ptr<cv::Mat> consCurrentFrame = static_cast<std::unique_ptr<cv::Mat>>(&buffor1) ;
-    std::unique_ptr<cv::Mat> consNextFrame = static_cast<std::unique_ptr<cv::Mat>>(&buffor2);       
+    
     r_cap >> mainFrame;
     buffor1 = mainFrame;
     buffor2 = mainFrame;
 
+    std::unique_ptr<cv::Mat> consCurrentFrame { std::make_unique<cv::Mat>(buffor1) };
+    std::unique_ptr<cv::Mat> consNextFrame { std::make_unique<cv::Mat>(buffor2) };
+
     while(true) {
         r_cap >> mainFrame;
 
-        if (mainFrame.empty() || consCurrentFrame->empty()) {
+        if (mainFrame.empty() || consCurrentFrame->empty() || consNextFrame->empty()) {
             break;
         }
 
