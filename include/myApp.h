@@ -12,5 +12,4 @@ public:
     ~myApp();
 private:
     void m_window(cv::VideoCapture& r_Cap);
-
 };

@@ -25,7 +25,7 @@ void vidSearch::listVideoNames()
     int i{1};
     for(const auto& relPath : this->fRelPaths)
     {
-        const std::string_view fileName{relPath.substr((this->dirPath.string().length())+1)};
+        const std::string& fileName{relPath.substr((this->dirPath.string().length())+1)};
         fmt::print("{}. {}\n", i, fileName);
         ++i;
     }
