@@ -4,10 +4,15 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 
-
+# Remove this or edit in case the project does not compile
+# there exists posibility that i have setted this incorectly and might require change depending on the system
+# its likely the set variable to opencv in libraries folder and include directories
+# i was unable to make it work otherwise
 set(OpenCV_DIR ${PROJECT_SOURCE_DIR}/lib/opencv)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+
+
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/lib/fmt)
 

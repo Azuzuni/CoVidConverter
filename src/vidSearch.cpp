@@ -1,5 +1,5 @@
 #include "vidSearch.h"
-
+#include "fmt/core.h"
 void vidSearch::run()
 {
     this->findVideos();
