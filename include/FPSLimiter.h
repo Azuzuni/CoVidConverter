@@ -41,7 +41,7 @@ public:
 private:
     int targetFPS;
     int frameCount;
-    int currentFPS;
+    int currentFPS = 0;
     std::chrono::milliseconds frameDuration;
     std::chrono::high_resolution_clock::time_point startTime;
     std::chrono::high_resolution_clock::time_point lastTime;

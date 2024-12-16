@@ -62,8 +62,7 @@ void myApp::run()
 }
 
 void myApp::m_window(cv::VideoCapture& r_cap) {
-    int width{210};
-    int height{width/10};
+
     FPSLimiter fpsCap(r_cap.get((cv::CAP_PROP_FPS)));
     std::cout << "\033[?25l";
 
@@ -100,8 +99,8 @@ void myApp::m_window(cv::VideoCapture& r_cap) {
 
 
     moveCursor(0,0);
-    for(int i{0}; i<height; ++i) {
-        for(int n{0}; n<width/3; ++n) {
+    for(int i{0}; i<m_height; ++i) {
+        for(int n{0}; n<m_width/3; ++n) {
             const cv::Vec3b& bgr = consCurrentFrame->at<cv::Vec3b>(n,i);
             switch ((bgr[0]+bgr[1]+bgr[2])/3)
                     {
@@ -132,13 +131,13 @@ void myApp::m_window(cv::VideoCapture& r_cap) {
         }
 
         // Processing logic goes here
-        cv::resize(*consNextFrame,*consNextFrame,cv::Size(width,height));
+        cv::resize(*consNextFrame,*consNextFrame,cv::Size(m_width,m_height));
         cv::cvtColor(*consNextFrame, *consNextFrame, cv::COLOR_BGR2GRAY);
 
 
 
-        for(int y{0}; y<width/3; ++y) {
-            for(int x{0}; x<height; ++x) {
+        for(int y{0}; y<m_width/3; ++y) {
+            for(int x{0}; x<m_height; ++x) {
 
                 const cv::Vec3b& bgr1 = consCurrentFrame->at<cv::Vec3b>(x,y);
                 const cv::Vec3b& bgr2 = consNextFrame->at<cv::Vec3b>(x,y);
@@ -166,8 +165,8 @@ void myApp::m_window(cv::VideoCapture& r_cap) {
 
         // consCurrentFrame = consNextFrame;
         std::swap(consCurrentFrame,consNextFrame);
-        moveCursor(height+5,0);
-        std::cout << "FPS: " << fpsCap.getCurrentFPS() << '\n';
+        moveCursor(m_height+5,0);
+        std::cout << "FPS: " << fpsCap.getCurrentFPS();
         fpsCap.endFrame();
     }
 }
