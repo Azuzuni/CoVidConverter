@@ -16,27 +16,27 @@ public:
     }
 
     void endFrame() {
-        auto frameTime = std::chrono::high_resolution_clock::now() - startTime;
+        auto frameTime{std::chrono::high_resolution_clock::now() - startTime};
         if (frameTime < frameDuration) {
             // Sleep for the remaining time to cap FPS
             std::this_thread::sleep_for(frameDuration - frameTime);
         }
+
         // Update frame count and check FPS every second
-        ++frameCount;
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<float> elapsed = currentTime - lastTime;
+    //     ++frameCount;
+    //     auto currentTime = std::chrono::high_resolution_clock::now();
+    //     std::chrono::duration<float> elapsed = currentTime - lastTime;
 
-        if (elapsed.count() >= 1.0f) {
-            // Print the FPS once every second
-            lastTime = currentTime;
-            currentFPS = frameCount;
-            frameCount = 0;  // Reset frame count for the next second
-        }
+    //     if (elapsed.count() >= 1.0f) {
+    //         lastTime = currentTime;
+    //         currentFPS = frameCount;
+    //         frameCount = 0;  // Reset frame count for the next second
+    //     }
     }
 
-    int getCurrentFPS() const {
-        return currentFPS;
-    }
+    // int getCurrentFPS() const {
+    //     return currentFPS;
+    // }
 
 private:
     int targetFPS;

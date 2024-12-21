@@ -16,13 +16,13 @@ public:
 
 // METHODS
 private:
-    void findVideos();
+    void findVideos(); // search video folder and assing all files inside to fRelPaths
 
 public:
     void run();
     void listVideoNames();
     std::string selectVid();
-    vidSearch(std::string_view dirPath);
-    ~vidSearch();
+    vidSearch(std::string_view dirPath) : dirPath(dirPath){};
+    ~vidSearch(){};
 };
 

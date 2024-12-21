@@ -23,6 +23,7 @@ set(SOURCES
 ${PROJECT_SOURCE_DIR}/main.cpp
 ${PROJECT_SOURCE_DIR}/src/myApp.cpp
 ${PROJECT_SOURCE_DIR}/src/vidSearch.cpp
+${PROJECT_SOURCE_DIR}/src/videoConvert.cpp
 )
 
 add_executable(CoVidConverter 

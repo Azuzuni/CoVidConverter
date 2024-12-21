@@ -1,3 +1,4 @@
+  
 #include "vidSearch.h"
 #include "fmt/core.h"
 void vidSearch::run()
@@ -46,11 +47,11 @@ std::string vidSearch::selectVid()
     return this->fRelPaths[select-1];
 }
 
-vidSearch::vidSearch(std::string_view dirPath)
-{
-    this->dirPath = dirPath;
-}
+// vidSearch::vidSearch(std::string_view dirPath)
+// {
+//     this->dirPath = dirPath;
+// }
 
-vidSearch::~vidSearch()
-{
-}
+// vidSearch::~vidSearch()
+// {
+// }
