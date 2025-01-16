@@ -1,76 +1,69 @@
 
-#include "videoConvert.h"
-#include "FPSLimiter.h"
+#include "VideoConvert.hpp"
+#include "FPSLimiter.hpp"
 #include "opencv2/core.hpp"
 #include "opencv2/videoio.hpp"
 #include "opencv2/highgui.hpp"
 #include <memory>
+#include <sstream>
+#include "fmt/core.h"
+#include "Utilities.hpp"
+#include "Variables.hpp"
 
-// y for vertical movement, x for horizontal
-void videoConvert::moveCursor(int y, int x) {
-        #ifdef _WIN32
-            // Windows-specific implementation
-            COORD position{position.X=x,position.Y=y};
-            SetConsoleCursorPosition(hConsole, position);
-        #else
-            // Unix-like (ANSI escape codes) implementation
-            std::cout << "\033[" << row << ";" << col << "H";
-        #endif
-}
+void VideoConvert::processFrame() {
+    namespace Vars = Variables;
+    cv::resize(m_processedFrame,m_processedFrame, cv::Size(Vars::width,Vars::height));
+    cv::cvtColor(m_processedFrame, m_processedFrame, cv::COLOR_BGR2GRAY);
+    std::string temporaryString{"\r"};
+    for(int x{0}; x<Vars::height; ++x) {
+        for(int y{0}; y<static_cast<int>(Vars::width/3); ++y) {
+            const cv::Vec3b& bgr = m_processedFrame.at<cv::Vec3b>(x,y);
 
-void videoConvert::processFrame(bool first = false) {
-    cv::resize(*consNextFrame,*consNextFrame,cv::Size(width,height));
-    cv::cvtColor(*consNextFrame, *consNextFrame, cv::COLOR_BGR2GRAY);
-    for(int y{0}; y<width/3; ++y) {
-            for(int x{0}; x<height; ++x) {
-
-                const cv::Vec3b& bgr1 = consCurrentFrame->at<cv::Vec3b>(x,y);
-                const cv::Vec3b& bgr2 = consNextFrame->at<cv::Vec3b>(x,y);
-
-                if(bgr1 != bgr2 || first) {
-                    moveCursor(x,y);
-                    switch ((bgr2[0]+bgr2[1]+bgr2[2])/3)
-                    {
-                        case 0 ... 25: printf("%c",' '); break;
-                        case 26 ... 50: printf("%c",','); break;
-                        case 51 ... 75: printf("%c",':'); break;
-                        case 76 ... 100: printf("%c",';'); break;
-                        case 101 ... 125: printf("%c",'|'); break;
-                        case 126 ... 150: printf("%c",'/'); break;
-                        case 151 ... 175: printf("%c",'?'); break;
-                        case 176 ... 200: printf("%c",'$'); break;
-                        case 201 ... 225: printf("%c",'#'); break;
-                        case 226 ... 255: printf("%c",'@'); break;
-                        default: printf("%c",' '); break;
-                    }
-                }
-
+            switch ((bgr[0]+bgr[1]+bgr[2])/3)
+            {
+                case 0 ... 25: temporaryString+=' '; break;
+                case 26 ... 50: temporaryString+=','; break;
+                case 51 ... 75: temporaryString+=':'; break;
+                case 76 ... 100: temporaryString+=';'; break;
+                case 101 ... 125: temporaryString+='|'; break;
+                case 126 ... 150: temporaryString+='/'; break;
+                case 151 ... 175: temporaryString+='?'; break;
+                case 176 ... 200: temporaryString+='$'; break;
+                case 201 ... 225: temporaryString+='#'; break;
+                case 226 ... 255: temporaryString+='@'; break;
+                default: temporaryString+='E'; break;
             }
         }
+        temporaryString+='\n';
+    }
+        
+    std::stringstream output;
+    output.str(temporaryString);
+    utilities::moveCursor(0,0);
+    std::cout << output.str() << std::flush;
 }
 
 
 
 
-void videoConvert::run() {
-
-    // set video FPS limit based on r_cap video fps rate
-    FPSLimiter fpsCap(r_cap.get((cv::CAP_PROP_FPS)));
+void VideoConvert::run() {
+    namespace Vars = Variables;
+    if(Vars::useDefaultVideoFPS) Vars::maxFPS = m_rcap.get(cv::CAP_PROP_FPS);
+    else if(!Vars::capFPS) Vars::maxFPS = {9999};
+    FPSLimiter fpsCap(Vars::maxFPS);
     std::cout << "\033[?25l"; // hide cursor
 
-    moveCursor(0,0);
-    processFrame(true);
-
+    processFrame();
     while(true) {
         fpsCap.startFrame(); // start point of the frame, needed for fps limitation
-        r_cap >> *consNextFrame; // load next frame into consoleNextFrame from r_cap
+        
+        m_rcap >> m_processedFrame; // load next frame into consoleNextFrame from m_rcap
+        if (m_processedFrame.empty()) break;
 
-        // if there are no more frames break the loop
-        if (consCurrentFrame->empty() || consNextFrame->empty()) {
-            break;
-        }
         processFrame();
-        std::swap(consCurrentFrame,consNextFrame);
+        utilities::moveCursor(0,40);
+        std::cout << "FPS: " << fpsCap.getCurrentFPS() << "   ";
+        
         fpsCap.endFrame();
     }
 

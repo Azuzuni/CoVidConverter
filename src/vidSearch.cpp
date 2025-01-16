@@ -1,16 +1,19 @@
   
-#include "vidSearch.h"
+#include "VidSearch.hpp"
 #include "fmt/core.h"
-void vidSearch::run()
+void VidSearch::run()
 {
     this->findVideos();
 }
 
-void vidSearch::findVideos()
+void VidSearch::findVideos()
 {
-    if(!fs::exists(this->dirPath) || !fs::is_directory(this->dirPath)) throw this->dirPath;
+    if(!fs::exists(m_dirPath) || !fs::is_directory(m_dirPath)) {
+        std::cerr << "Could not find folder: " << m_dirPath << '\n';
+        return;
+    }
     int i{1};
-    for(const auto& file : fs::directory_iterator(this->dirPath))
+    for(const auto& file : fs::directory_iterator(m_dirPath))
     {
         if(fs::is_regular_file(file))
         {
@@ -21,17 +24,17 @@ void vidSearch::findVideos()
     }
 }
 
-void vidSearch::listVideoNames()
+void VidSearch::listVideoNames()
 {
     int i{1};
     for(const auto& relPath : this->fRelPaths)
     {
-        const std::string& fileName{relPath.substr((this->dirPath.string().length())+1)};
+        const std::string& fileName{relPath.substr((m_dirPath.string().length())+1)};
         fmt::print("{}. {}\n", i, fileName);
         ++i;
     }
 }
-std::string vidSearch::selectVid()
+std::string VidSearch::selectVid()
 {
     
     this->listVideoNames();
@@ -46,12 +49,3 @@ std::string vidSearch::selectVid()
     }
     return this->fRelPaths[select-1];
 }
-
-// vidSearch::vidSearch(std::string_view dirPath)
-// {
-//     this->dirPath = dirPath;
-// }
-
-// vidSearch::~vidSearch()
-// {
-// }

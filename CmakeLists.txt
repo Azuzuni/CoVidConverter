@@ -4,26 +4,23 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 
-# Remove this or edit in case the project does not compile
-# there exists posibility that i have setted this incorectly and might require change depending on the system
-# its likely the set variable to opencv in libraries folder and include directories
-# i was unable to make it work otherwise
-set(OpenCV_DIR ${PROJECT_SOURCE_DIR}/lib/opencv)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -S")
+
+
 find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
-
-
-
 add_subdirectory(${PROJECT_SOURCE_DIR}/lib/fmt)
+
 
 include(CTest)
 enable_testing()
 
+
+
 set(SOURCES
 ${PROJECT_SOURCE_DIR}/main.cpp
-${PROJECT_SOURCE_DIR}/src/myApp.cpp
-${PROJECT_SOURCE_DIR}/src/vidSearch.cpp
-${PROJECT_SOURCE_DIR}/src/videoConvert.cpp
+${PROJECT_SOURCE_DIR}/src/CoVidConverter.cpp
+${PROJECT_SOURCE_DIR}/src/VidSearch.cpp
+${PROJECT_SOURCE_DIR}/src/VideoConvert.cpp
 )
 
 add_executable(CoVidConverter 
