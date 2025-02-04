@@ -13,3 +13,4 @@ namespace Variables {
 
     inline std::string videoFolder{"../video"};
 }
+               

@@ -2,7 +2,6 @@
 int main()
 {
     // to do:
-    // remove try and catch
     // add FPSLimiter.cpp
     // add loading settings from file
     // fix linking error 

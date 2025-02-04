@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -S")
+
 
 
 find_package(OpenCV REQUIRED)
@@ -21,6 +21,7 @@ ${PROJECT_SOURCE_DIR}/main.cpp
 ${PROJECT_SOURCE_DIR}/src/CoVidConverter.cpp
 ${PROJECT_SOURCE_DIR}/src/VidSearch.cpp
 ${PROJECT_SOURCE_DIR}/src/VideoConvert.cpp
+${PROJECT_SOURCE_DIR}/src/FPSLimiter.cpp
 )
 
 add_executable(CoVidConverter 
@@ -30,4 +31,4 @@ ${SOURCES}
 target_link_libraries(CoVidConverter ${OpenCV_LIBS})
 target_link_libraries(CoVidConverter fmt)
 target_include_directories(CoVidConverter PRIVATE ${PROJECT_SOURCE_DIR}/include )
-target_include_directories(CoVidConverter PRIVATE ${PROJECT_SOURCE_DIR}/lib/opencv/include )
+target_include_directories(CoVidConverter PRIVATE ${OpenCV_Include_DIR} )
