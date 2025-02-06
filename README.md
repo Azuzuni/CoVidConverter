@@ -12,7 +12,7 @@ I have been using GCC 12 to compile this project
 
 # How to use
 
-After launching, the program will search ../video folder to find mp4 then display options in terminal
-after choosing the video, program will start converting it in real time
+After launching, the program will search ../video folder to find mp4 then display options in terminal.
+Then choose the video, the program will start converting it in real time. 
 the screen size of video can be accessed via variable in Variables.hpp
 FPS cap is based on Variables.hpp settings
