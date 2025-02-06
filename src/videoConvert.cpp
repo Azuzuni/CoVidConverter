@@ -12,40 +12,22 @@
 #include <thread>
 #include <chrono>
 
-
 void VideoConvert::processFrame() {
-    namespace Vars = Variables;
-    cv::resize(m_processedFrame,m_processedFrame, cv::Size(Vars::width,Vars::height));
-    cv::cvtColor(m_processedFrame, m_processedFrame, cv::COLOR_BGR2GRAY);
-    constexpr char gradient[11] = {" ,:;|/?$#@"} ;
-#if 0
-    std::string temporaryString{"\r"};
-    for(int x{0}; x<Vars::height; ++x) {
-        for(int y{0}; y<static_cast<int>(Vars::width/3); ++y) {
-            const cv::Vec3b& bgr = m_processedFrame.at<cv::Vec3b>(x,y);
 
-            switch ((bgr[0]+bgr[1]+bgr[2])/3)
-            {
-                case 0 ... 25:      temporaryString+=gradient[0]; break;
-                case 26 ... 50:     temporaryString+=gradient[1]; break;
-                case 51 ... 75:     temporaryString+=gradient[2]; break;
-                case 76 ... 100:    temporaryString+=gradient[3]; break;
-                case 101 ... 125:   temporaryString+=gradient[4]; break;
-                case 126 ... 150:   temporaryString+=gradient[5]; break;
-                case 151 ... 175:   temporaryString+=gradient[6]; break;
-                case 176 ... 200:   temporaryString+=gradient[7]; break;
-                case 201 ... 225:   temporaryString+=gradient[8]; break;
-                case 226 ... 255:   temporaryString+=gradient[9]; break;
-                default: temporaryString+='E'; break;
-            }
-        }
-        temporaryString+='\n';
-    }
-#else
+    // Namespace for Width, Height, Gradient variables
+    using namespace Variables;
+
+    // resize and apply grayscale filter on the frame
+    cv::resize(m_processedFrame,m_processedFrame, cv::Size(width,height));
+    cv::cvtColor(m_processedFrame, m_processedFrame, cv::COLOR_BGR2GRAY);
+
+    // buffor to store character info for the frame
     std::stringstream output;
-    output.str().reserve(Vars::height*Vars::width);
-     for(int x{0}; x<Vars::height; ++x) {
-        for(int y{0}; y<static_cast<int>(Vars::width/3); ++y) {
+    output.str().reserve(height*width);
+
+    // go pixel by pixel then calculate average color and assign character from gradient
+    for(int x{0}; x<height; ++x) {
+        for(int y{0}; y<static_cast<int>(width/3); ++y) {
             const cv::Vec3b& bgr{ m_processedFrame.at<cv::Vec3b>(x,y) };
 
             switch ((bgr[0]+bgr[1]+bgr[2])/3)
@@ -64,18 +46,10 @@ void VideoConvert::processFrame() {
         }
         output << fmt::format("\n");
     }
-#endif
-#if 1
-    // output.str(temporaryString);
+
+    // start from 0,0 then display entire frame at once
     utilities::moveCursor(0,0);
     std::cout << output.str() << std::flush;
-    // fmt::print("{}",output.str());
-    // std::cout << std::flush;
-#else
-    // fmt::
-#endif
-
-
 }
 
 static bool isRunning{true};
@@ -84,35 +58,29 @@ static bool isRunning{true};
 void VideoConvert::run() {
     namespace Vars = Variables;
 
+    // apply FPS cap / remove it depending on Variables.hpp settings
     if(Vars::useDefaultVideoFPS) Vars::maxFPS = m_rcap.get(cv::CAP_PROP_FPS);
     else if(!Vars::capFPS) Vars::maxFPS = {9999};
     FPSLimiter fpsCap(Vars::maxFPS);
-    std::cout << "\033[?25l"; // hide cursor
-    auto stopLoop = []() {
-        int x{0};
-        std::cin >> x;
-        if(x!=0) isRunning=false;
-    };
-    std::thread waitForEnter(stopLoop);
-    processFrame();
+
+    // hide cursor
+    std::cout << "\033[?25l"; 
+
     while(isRunning) {
-        fpsCap.startFrame(); // start point of the frame, needed for fps limitation 
+        // start point of the frame, needed for fps limitation 
+        fpsCap.startFrame(); 
         
+        // load next frame into buffer and check if its empty
         m_rcap >> m_processedFrame;
         if (m_processedFrame.empty()) break;
 
         processFrame();
-#if 1
-    
-#endif
 
-        utilities::moveCursor(0,40);
+        // display FPS (might make it into a function in future)
+        utilities::moveCursor(0,Vars::height+2);
         std::cout << "FPS: " << fpsCap.getCurrentFPS() << "   ";
         
+        // applies fps cap if its set
         fpsCap.endFrame();
     }
-    waitForEnter.join();
-    utilities::moveCursor(0,Vars::height+1);
-    std::cout << "\n\nAverage FPS: "<< fpsCap.getAvgFPS();
-
 }
