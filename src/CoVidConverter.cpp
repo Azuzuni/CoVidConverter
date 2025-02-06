@@ -18,9 +18,11 @@ void runCoVidConverter()
 {
     namespace Vars = Variables;
 
-    // search video folder and select video option.
+    // search video folder and display options in console
     VidSearch vidSrch(Vars::videoFolder);
     vidSrch.run(); 
+
+    // select video then return its string to VideoCapture
     cv::VideoCapture cap(vidSrch.selectVid());
     if(!cap.isOpened()) 
     {
@@ -28,7 +30,7 @@ void runCoVidConverter()
         return;
     }
 
-    // start processing frames from selected video
+    // start converting video
     VideoConvert vidConvert(cap);
     vidConvert.run();
     cap.release();

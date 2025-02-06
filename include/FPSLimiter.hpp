@@ -10,14 +10,15 @@ public:
         lastTime = std::chrono::high_resolution_clock::now();
     }
 
+    // start point of the frame, needed for fps limitation 
     inline const void startFrame() {
         startTime = std::chrono::high_resolution_clock::now();
     }
+
+    // ends frame and applies fps cap if its set
     void endFrame();
 
-    inline const int getAvgFPS() const {
-    return sumFPS/callCount;
-    }
+    // returns currentFPS
     inline const int getCurrentFPS() const {
         return currentFPS;
     }

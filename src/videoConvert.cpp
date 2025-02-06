@@ -67,7 +67,6 @@ void VideoConvert::run() {
     std::cout << "\033[?25l"; 
 
     while(isRunning) {
-        // start point of the frame, needed for fps limitation 
         fpsCap.startFrame(); 
         
         // load next frame into buffer and check if its empty
@@ -80,7 +79,6 @@ void VideoConvert::run() {
         utilities::moveCursor(0,Vars::height+2);
         std::cout << "FPS: " << fpsCap.getCurrentFPS() << "   ";
         
-        // applies fps cap if its set
         fpsCap.endFrame();
     }
 }
