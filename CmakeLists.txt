@@ -4,9 +4,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 
-
-
-
 find_package(OpenCV REQUIRED)
 add_subdirectory(${PROJECT_SOURCE_DIR}/lib/fmt)
 
@@ -32,3 +29,33 @@ target_link_libraries(CoVidConverter ${OpenCV_LIBS})
 target_link_libraries(CoVidConverter fmt)
 target_include_directories(CoVidConverter PRIVATE ${PROJECT_SOURCE_DIR}/include )
 target_include_directories(CoVidConverter PRIVATE ${OpenCV_Include_DIR} )
+
+
+##############################################################################################################################
+# GTEST
+##############################################################################################################################
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  DOWNLOAD_EXTRACT_TIMESTAMP true
+  URL https://github.com/google/googletest/archive/refs/heads/main.zip
+)
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(googletest)
+
+file(GLOB TESTS_SOURCES "tests/src/*")
+
+add_executable(CVCTests  ${TESTS_SOURCES})
+target_include_directories(CVCTests PUBLIC include)
+target_include_directories(CVCTests PUBLIC tests)
+
+
+# Link GoogleTest to your test executable
+target_link_libraries(CVCTests gtest_main gmock_main)
+
+# Add the test to CTest
+include(GoogleTest)
+gtest_discover_tests(CVCTests)
